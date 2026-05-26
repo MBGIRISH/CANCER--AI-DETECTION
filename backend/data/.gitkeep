@@ -1,0 +1,2 @@
+# This directory holds persistent scan report data (reports.json).
+# It is created automatically at runtime by storage.py.

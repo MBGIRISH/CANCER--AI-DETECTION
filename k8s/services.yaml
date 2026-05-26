@@ -1,0 +1,132 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+  namespace: default
+  labels:
+    app: frontend
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+      name: http
+  selector:
+    app: frontend
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+  namespace: default
+  labels:
+    app: backend
+spec:
+  ports:
+    - port: 8000
+      targetPort: 8000
+      protocol: TCP
+      name: http
+  selector:
+    app: backend
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-inference-service
+  namespace: default
+  labels:
+    app: ai-inference
+spec:
+  ports:
+    - port: 8001
+      targetPort: 8001
+      protocol: TCP
+      name: http
+  selector:
+    app: ai-inference
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: federated-coordinator-service
+  namespace: default
+  labels:
+    app: federated-coordinator
+spec:
+  ports:
+    - port: 8004
+      targetPort: 8004
+      protocol: TCP
+      name: http
+  selector:
+    app: federated-coordinator
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-service
+  namespace: default
+  labels:
+    app: mongodb
+spec:
+  ports:
+    - port: 27017
+      targetPort: 27017
+      protocol: TCP
+  selector:
+    app: mongodb
+  type: ClusterIP
+---
+# Caching Broker: Redis Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  namespace: default
+  labels:
+    app: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:7-alpine
+          ports:
+            - containerPort: 6379
+              name: redis
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 100m
+              memory: 128Mi
+---
+# Caching Broker: Redis Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-service
+  namespace: default
+  labels:
+    app: redis
+spec:
+  ports:
+    - port: 6379
+      targetPort: 6379
+      protocol: TCP
+  selector:
+    app: redis
+  type: ClusterIP

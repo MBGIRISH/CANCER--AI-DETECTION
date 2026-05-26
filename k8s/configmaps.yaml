@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: platform-config
+  namespace: default
+data:
+  MONGODB_DATABASE: "oncosight"
+  REDIS_HOST: "redis-service"
+  REDIS_PORT: "6379"
+  # Set to 'cuda' to schedule on GPU nodes with NVIDIA runtime, otherwise 'cpu'
+  DEVICE: "cpu"
+  MIN_NODES_REQUIRED: "3"
+  COORDINATOR_URL: "http://federated-coordinator-service:8004"

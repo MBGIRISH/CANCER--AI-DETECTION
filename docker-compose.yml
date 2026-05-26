@@ -1,0 +1,160 @@
+version: '3.8'
+
+services:
+  # NGINX API Gateway / Load Balancer
+  nginx:
+    build:
+      context: .
+      dockerfile: docker/nginx.Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - frontend
+      - backend
+      - ai-inference
+      - federated-coordinator
+    networks:
+      - platform-network
+    restart: always
+
+  # React Frontend Service
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/frontend.Dockerfile
+    networks:
+      - platform-network
+    restart: always
+
+  # FastAPI Backend (Auth & Reports)
+  backend:
+    build:
+      context: .
+      dockerfile: docker/backend.Dockerfile
+    environment:
+      - MONGODB_URI=mongodb+srv://ankush:ankush66@cluster0.wvivwbg.mongodb.net/?appName=Cluster0
+      - MONGODB_DATABASE=oncosight
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - JWT_SECRET=oncosight-secret-key-super-secure-12345
+    depends_on:
+      - mongodb
+      - redis
+    networks:
+      - platform-network
+    restart: always
+
+  # AI Inference Service (PyTorch / CUDA / CPU Fallback)
+  ai-inference:
+    build:
+      context: .
+      dockerfile: docker/ai-inference.Dockerfile
+    environment:
+      - WEIGHTS_DIR=/app/weights
+      - DEVICE=cpu # Can be set to 'cuda' if GPU is available
+    volumes:
+      - model-weights:/app/weights
+    networks:
+      - platform-network
+    restart: always
+    # GPU execution configurations. Uncomment if nvidia-docker runtime is installed on the host
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+
+  # Federated Learning Coordinator Server
+  federated-coordinator:
+    build:
+      context: .
+      dockerfile: docker/federated-learning.Dockerfile
+    environment:
+      - MIN_NODES_REQUIRED=3
+    networks:
+      - platform-network
+    restart: always
+
+  # Federated Hospital Node Alpha
+  hospital-node-alpha:
+    build:
+      context: .
+      dockerfile: docker/federated-learning.Dockerfile
+    command: python client_node.py
+    environment:
+      - COORDINATOR_URL=http://federated-coordinator:8004
+      - NODE_ID=node-hospital-alpha
+      - NODE_NAME=Hospital Node Alpha
+      - HOSPITAL_LOCATION=Boston Medical Center
+      - IP_ADDRESS=192.168.42.101
+    depends_on:
+      - federated-coordinator
+    networks:
+      - platform-network
+    restart: always
+
+  # Federated Hospital Node Beta
+  hospital-node-beta:
+    build:
+      context: .
+      dockerfile: docker/federated-learning.Dockerfile
+    command: python client_node.py
+    environment:
+      - COORDINATOR_URL=http://federated-coordinator:8004
+      - NODE_ID=node-hospital-beta
+      - NODE_NAME=Hospital Node Beta
+      - HOSPITAL_LOCATION=Stanford Healthcare
+      - IP_ADDRESS=192.168.42.102
+    depends_on:
+      - federated-coordinator
+    networks:
+      - platform-network
+    restart: always
+
+  # Federated Hospital Node Gamma
+  hospital-node-gamma:
+    build:
+      context: .
+      dockerfile: docker/federated-learning.Dockerfile
+    command: python client_node.py
+    environment:
+      - COORDINATOR_URL=http://federated-coordinator:8004
+      - NODE_ID=node-hospital-gamma
+      - NODE_NAME=Hospital Node Gamma
+      - HOSPITAL_LOCATION=MD Anderson Cancer Center
+      - IP_ADDRESS=192.168.42.103
+    depends_on:
+      - federated-coordinator
+    networks:
+      - platform-network
+    restart: always
+
+  # MongoDB NoSQL Registry
+  mongodb:
+    image: mongo:6.0
+    volumes:
+      - mongodb-data:/data/db
+    networks:
+      - platform-network
+    restart: always
+
+  # Redis Cache / Queue broker
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis-data:/data
+    networks:
+      - platform-network
+    restart: always
+
+networks:
+  platform-network:
+    driver: bridge
+
+volumes:
+  mongodb-data:
+  redis-data:
+  model-weights:

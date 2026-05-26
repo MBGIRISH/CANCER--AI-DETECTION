@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-inference
+  namespace: default
+  labels:
+    app: ai-inference
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ai-inference
+  template:
+    metadata:
+      labels:
+        app: ai-inference
+    spec:
+      containers:
+        - name: ai-inference
+          image: ai-inference:latest
+          ports:
+            - containerPort: 8001
+              name: http
+          env:
+            - name: WEIGHTS_DIR
+              value: "/app/weights"
+            - name: DEVICE
+              valueFrom:
+                configMapKeyRef:
+                  name: platform-config
+                  key: DEVICE
+          resources:
+            requests:
+              cpu: "1"
+              memory: 2Gi
+            limits:
+              cpu: "2"
+              memory: 4Gi
+              # GPU scheduling limit: uncomment to deploy on GPU cluster with NVIDIA Device Plugin
+              # nvidia.com/gpu: 1
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8001
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8001
+            initialDelaySeconds: 20
+            periodSeconds: 20
+            timeoutSeconds: 5
+      # Node toleration for scheduling on dedicated GPU pools
+      # tolerations:
+      #   - key: "nvidia.com/gpu"
+      #     operator: "Exists"
+      #     effect: "NoSchedule"

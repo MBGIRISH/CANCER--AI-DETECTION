@@ -1,0 +1,72 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: platform-ingress
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    # Enable SSL Redirects
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    # Set maximum upload body size (32MB for high-res medical DICOM/JPEG scans)
+    nginx.ingress.kubernetes.io/proxy-body-size: "32m"
+    # Rate Limiting: 10 requests per second per IP
+    nginx.ingress.kubernetes.io/limit-rps: "10"
+    # Enable CORS
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    # Secure Headers
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers "X-Frame-Options: DENY";
+      more_set_headers "X-Content-Type-Options: nosniff";
+      more_set_headers "X-XSS-Protection: 1; mode=block";
+    # Regex rewrite target to resolve relative pathing across microservices
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  tls:
+    - hosts:
+        - oncosight.ai
+      secretName: oncosight-tls
+  rules:
+    - host: oncosight.ai
+      http:
+        paths:
+          # Frontend static delivery
+          - path: /()(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend-service
+                port:
+                  number: 80
+          # Auth proxy routing (map /api/auth/login to auth-service:8000/api/login)
+          - path: /api/auth(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: backend-service
+                port:
+                  number: 8000
+          # Report/PACS registry proxy routing
+          - path: /api/reports(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: backend-service
+                port:
+                  number: 8000
+          # AI predictions / inference routing (map /api/predict to ai-inference:8001/predict)
+          - path: /api/predict(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: ai-inference-service
+                port:
+                  number: 8001
+          # Federated coordinator routing
+          - path: /api/federated(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: federated-coordinator-service
+                port:
+                  number: 8004

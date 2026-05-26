@@ -1,0 +1,94 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-black text-white font-sans antialiased overflow-x-hidden;
+    background-color: #000000;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Manrope', 'Inter', system-ui, sans-serif;
+  }
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: #000000;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 180, 216, 0.3);
+}
+
+/* Premium Matte Panel Styles */
+.clinical-panel {
+  background-color: #0b0c0e;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.85);
+}
+
+.clinical-panel-active {
+  background-color: #0b0c0e;
+  border: 1px solid rgba(0, 180, 216, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.85);
+}
+
+/* Clinical Inputs */
+.clinical-input {
+  background-color: #050608;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  font-size: 12px;
+  color: #ffffff;
+  padding: 10px 14px;
+  transition: all 0.2s ease-in-out;
+}
+
+.clinical-input:focus {
+  outline: none;
+  border-color: rgba(0, 180, 216, 0.4);
+  background-color: #08090d;
+}
+
+/* Minimal Spotlights */
+.spotlight-top {
+  position: absolute;
+  top: -20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1000px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(0, 180, 216, 0.035) 0%, transparent 70%);
+  filter: blur(60px);
+  pointer-events: none;
+}
+
+/* Faint Scanning pulse overlay on preview images */
+.clinical-scan-sweep {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 180, 216, 0.4), transparent);
+  animation: scan-pulse-slow 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes scan-pulse-slow {
+  0% { top: 0%; }
+  50% { top: 100%; }
+  100% { top: 0%; }
+}

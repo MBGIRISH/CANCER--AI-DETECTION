@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+venv/
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Build folders
+dist/
+build/
+
+# Raw datasets only
+model/chest_xray/
+model/stage_2_test_images/
+model/kaggle_3m/
+model/brain_tumor_dataset/
+model/lgg-mri-segmentation/
+# Large files
+*.pth
+*.h5
+*.pt
+*.dll
+*.lib

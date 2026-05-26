@@ -1,0 +1,177 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: federated-coordinator
+  namespace: default
+  labels:
+    app: federated-coordinator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: federated-coordinator
+  template:
+    metadata:
+      labels:
+        app: federated-coordinator
+    spec:
+      containers:
+        - name: federated-coordinator
+          image: federated-learning:latest
+          ports:
+            - containerPort: 8004
+              name: http
+          env:
+            - name: MIN_NODES_REQUIRED
+              valueFrom:
+                configMapKeyRef:
+                  name: platform-config
+                  key: MIN_NODES_REQUIRED
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8004
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8004
+            initialDelaySeconds: 10
+            periodSeconds: 10
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hospital-node-alpha
+  namespace: default
+  labels:
+    app: hospital-node-alpha
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hospital-node-alpha
+  template:
+    metadata:
+      labels:
+        app: hospital-node-alpha
+    spec:
+      containers:
+        - name: hospital-node-alpha
+          image: federated-learning:latest
+          command: ["python", "client_node.py"]
+          env:
+            - name: COORDINATOR_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: platform-config
+                  key: COORDINATOR_URL
+            - name: NODE_ID
+              value: "hospital-node-alpha"
+            - name: NODE_NAME
+              value: "Hospital Node Alpha"
+            - name: HOSPITAL_LOCATION
+              value: "Boston Medical Center"
+            - name: IP_ADDRESS
+              value: "192.168.42.101"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hospital-node-beta
+  namespace: default
+  labels:
+    app: hospital-node-beta
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hospital-node-beta
+  template:
+    metadata:
+      labels:
+        app: hospital-node-beta
+    spec:
+      containers:
+        - name: hospital-node-beta
+          image: federated-learning:latest
+          command: ["python", "client_node.py"]
+          env:
+            - name: COORDINATOR_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: platform-config
+                  key: COORDINATOR_URL
+            - name: NODE_ID
+              value: "hospital-node-beta"
+            - name: NODE_NAME
+              value: "Hospital Node Beta"
+            - name: HOSPITAL_LOCATION
+              value: "Stanford Healthcare"
+            - name: IP_ADDRESS
+              value: "192.168.42.102"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hospital-node-gamma
+  namespace: default
+  labels:
+    app: hospital-node-gamma
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hospital-node-gamma
+  template:
+    metadata:
+      labels:
+        app: hospital-node-gamma
+    spec:
+      containers:
+        - name: hospital-node-gamma
+          image: federated-learning:latest
+          command: ["python", "client_node.py"]
+          env:
+            - name: COORDINATOR_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: platform-config
+                  key: COORDINATOR_URL
+            - name: NODE_ID
+              value: "hospital-node-gamma"
+            - name: NODE_NAME
+              value: "Hospital Node Gamma"
+            - name: HOSPITAL_LOCATION
+              value: "MD Anderson Cancer Center"
+            - name: IP_ADDRESS
+              value: "192.168.42.103"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
