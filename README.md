@@ -2,7 +2,7 @@
 
 > **An advanced, privacy-preserving AI platform for multi-modal cancer detection and federated medical learning.**
 
-![ONCOSIGHT Banner](https://via.placeholder.com/1200x300.png?text=ONCOSIGHT+AI+-+Next-Gen+Cancer+Detection)
+![ONCOSIGHT Banner](./assets/banner.png)
 
 ## 📌 Problem Statement
 Medical imaging generates vast amounts of data, yet hospital networks struggle to share knowledge due to stringent privacy regulations (HIPAA/GDPR). This creates data silos that severely bottleneck AI advancements in oncology. **ONCOSIGHT AI** solves this by leveraging **Federated Learning**—allowing decentralized clinical institutions to collaboratively train highly accurate cancer detection models *without ever sharing raw patient data*.
