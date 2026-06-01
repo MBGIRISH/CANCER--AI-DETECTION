@@ -23,8 +23,3 @@ model/lgg-mri-segmentation/
 *.pt
 *.dll
 *.lib
-
-# Logs and OS specific
-*.log
-.DS_Store
-

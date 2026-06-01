@@ -1,0 +1,10 @@
+C:\Users\fawaz\Desktop\cancer-ai-platform\model\training\train_brain_tumor.py:100: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
+  scaler = GradScaler()
+C:\Users\fawaz\Desktop\cancer-ai-platform\backend\venv\Lib\site-packages\torch\cuda\amp\grad_scaler.py:31: UserWarning: torch.cuda.amp.GradScaler is enabled, but CUDA is not available.  Disabling.
+  super().__init__(
+[train_brain] Device: cpu
+Epoch 1/50:   0%|          | 0/12 [00:00<?, ?it/s]C:\Users\fawaz\Desktop\cancer-ai-platform\model\training\train_brain_tumor.py:118: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with autocast():
+C:\Users\fawaz\Desktop\cancer-ai-platform\backend\venv\Lib\site-packages\torch\cuda\amp\autocast_mode.py:54: UserWarning: CUDA is not available or torch_xla is imported. Disabling autocast.
+  super().__init__(
+Epoch 1/50:   8%|8         | 1/12 [00:04<00:52,  4.73s/it]
