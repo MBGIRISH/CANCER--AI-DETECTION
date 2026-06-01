@@ -10,6 +10,7 @@ Architecture:
 """
 
 import os
+from typing import Optional
 import torch
 import torch.nn as nn
 import torchvision.models as tv_models
@@ -74,7 +75,7 @@ class DecoderBlock(nn.Module):
         )
         self.relu = nn.ReLU(inplace=True)
 
-    def forward(self, x: torch.Tensor, skip: torch.Tensor | None = None) -> torch.Tensor:
+    def forward(self, x: torch.Tensor, skip: Optional[torch.Tensor] = None) -> torch.Tensor:
         x = nn.functional.interpolate(x, scale_factor=2, mode="bilinear", align_corners=False)
         if skip is not None:
             x = torch.cat([x, skip], dim=1)
@@ -220,7 +221,7 @@ def _load_segmentation(path: str):
 # ─────────────────────────────────────────────
 # ACCESSORS
 # ─────────────────────────────────────────────
-def get_model(key: str) -> nn.Module | None:
+def get_model(key: str) -> Optional[nn.Module]:
     return _models.get(key)
 
 

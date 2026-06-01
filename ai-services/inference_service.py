@@ -152,7 +152,9 @@ def run_inference(image_data: bytes, category: str) -> dict:
         elif confidence >= 50:
             risk_level = "Review Recommended"
         else:
-            risk_level = "Safe"
+            # If a tumor is detected at lower confidence (e.g., due to adjusted threshold),
+            # it should not be marked "Safe".
+            risk_level = "Review Recommended"
             
     is_critical = risk_level != "Safe"
 
@@ -225,9 +227,22 @@ def _run_classifier(model, image: Image.Image, category: str):
     confidence = probs.max().item() * 100.0
     class_idx  = probs.argmax(dim=1).item()
 
-    if category == "xray" and class_idx == 1:
+    if category == "mri":
+        # Lower threshold for MRI to increase sensitivity for small tumors
+        tumor_prob = probs[0, 1].item()
+        if tumor_prob >= 0.35:
+            class_idx = 1
+            confidence = tumor_prob * 100.0
+        else:
+            class_idx = 0
+            confidence = probs[0, 0].item() * 100.0
+
+    if category == "xray":
         pneumonia_prob = probs[0, 1].item()
-        if pneumonia_prob < 0.70:
+        if pneumonia_prob >= 0.35:
+            class_idx = 1
+            confidence = pneumonia_prob * 100.0
+        else:
             class_idx = 0
             confidence = probs[0, 0].item() * 100.0
 

@@ -1,4 +1,5 @@
 import hmac
+from typing import Optional
 import hashlib
 import json
 import base64
@@ -77,7 +78,7 @@ def create_jwt(payload: dict) -> str:
     
     return f"{header_b64}.{payload_b64}.{signature_b64}"
 
-def verify_jwt(token: str) -> dict | None:
+def verify_jwt(token: str) -> Optional[dict]:
     try:
         parts = token.split('.')
         if len(parts) != 3:

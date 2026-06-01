@@ -138,8 +138,8 @@ export default function AdvancedFeatures({ predictionResult, scanType, selectedS
 
   useEffect(() => {
     if (scanType) {
-      setSegCategory(scanType);
-      setHeatmapCategory(scanType);
+      setSegCategory(scanType === 'ct' ? 'mri' : scanType);
+      setHeatmapCategory(scanType === 'ct' ? 'mri' : scanType);
     }
   }, [scanType]);
 

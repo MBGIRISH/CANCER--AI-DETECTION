@@ -11,7 +11,7 @@ WORKDIR /app
 # Install system utilities & OpenCV dependencies (libgl1 for cv2, libgomp1 for openmp)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
-    libgl1-mesa-glx \
+    libgl1 \
     libglib2.0-0 \
     libgomp1 \
     curl \

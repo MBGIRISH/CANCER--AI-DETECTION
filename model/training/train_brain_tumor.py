@@ -18,7 +18,7 @@ DATA_DIR    = os.path.join(os.path.dirname(__file__), '..', 'brain_tumor_dataset
 SAVE_PATH   = os.path.join(os.path.dirname(__file__), '..', 'saved_models', 'brain_tumor_model.pth')
 IMG_SIZE    = 160
 BATCH_SIZE  = 16
-EPOCHS      = 12
+EPOCHS      = 50
 LR          = 1e-4
 NUM_CLASSES = 2
 DEVICE      = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -79,9 +79,7 @@ class DenseNet121Classifier(nn.Module):
         base = models.densenet121(weights='IMAGENET1K_V1')
         self.features = base.features
         
-        for name, param in self.features.named_parameters():
-            if not ('denseblock4' in name or 'norm5' in name):
-                param.requires_grad = False
+        # Layers are fully unfrozen for complete fine-tuning on the full dataset
                 
         self.classifier = nn.Sequential(
             nn.Linear(1024, 256),
@@ -105,7 +103,7 @@ scaler = GradScaler()
 best_val_f1 = 0.0
 best_model_wts = copy.deepcopy(model.state_dict())
 patience_counter = 0
-PATIENCE = 4
+PATIENCE = 10
 
 for epoch in range(EPOCHS):
     t0 = time.time()

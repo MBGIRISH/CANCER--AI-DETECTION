@@ -6,13 +6,13 @@ import xrayAsset from '../assets/xray_scan.png';
 import type { DoctorProfile } from '../App';
 
 interface UploadScanProps {
-  onScanSelected: (scanUrl: string, type: 'mri' | 'xray') => void;
+  onScanSelected: (scanUrl: string, type: 'mri' | 'ct' | 'xray') => void;
   isAnalyzing: boolean;
   setIsAnalyzing: (state: boolean) => void;
   analysisComplete: boolean;
   setAnalysisComplete: (state: boolean) => void;
   selectedScan: string | null;
-  scanType: 'mri' | 'xray' | null;
+  scanType: 'mri' | 'ct' | 'xray' | null;
   confidence: number;
   setConfidence: (val: number) => void;
   onNavigateToPredictions: () => void;
@@ -132,7 +132,7 @@ export default function UploadScan({
     const name = file.name.toLowerCase();
     
     // Always auto-detect based on file name first to prevent category mismatch
-    let type: 'mri' | 'xray' = 'mri';
+    let type: 'mri' | 'ct' | 'xray' = 'mri';
     if (
       name.includes('xray') || 
       name.includes('x-ray') || 
@@ -237,7 +237,7 @@ export default function UploadScan({
     }
   };
 
-  const getScanTypeName = (type: 'mri' | 'xray' | null) => {
+  const getScanTypeName = (type: 'mri' | 'ct' | 'xray' | null) => {
     if (type === 'mri') return 'Brain Tumor MRI';
     if (type === 'xray') return 'Pneumonia X-Ray';
     return 'Clinical Scan';

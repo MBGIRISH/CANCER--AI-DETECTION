@@ -9,7 +9,7 @@ import xrayAsset from '../assets/xray_scan.png';
 
 interface AIPredictionsProps {
   selectedScan: string | null;
-  scanType: 'mri' | 'xray' | null;
+  scanType: 'mri' | 'ct' | 'xray' | null;
   confidence: number;
   probability: number;
   patientName?: string;

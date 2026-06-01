@@ -222,10 +222,10 @@ export default function Reports({ patientName, patientAge, scanHistory = [], act
     const opt = {
       margin:       10,
       filename:     `${selectedReport.reportId}.pdf`,
-      image:        { type: 'jpeg', quality: 0.98 },
+      image:        { type: 'jpeg' as const, quality: 0.98 },
       html2canvas:  { scale: 2, useCORS: true, logging: false },
       jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
+    } as any;
 
     html2pdf().set(opt).from(element).save().then(() => {
       setIsExporting(false);

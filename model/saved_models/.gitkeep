@@ -1,0 +1,2 @@
+# Keep this directory in git, so that it exists in clean checkouts.
+# Pre-trained models (.pth) will be saved here during training.
